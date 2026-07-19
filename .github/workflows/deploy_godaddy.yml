@@ -1,0 +1,48 @@
+name: Deploy to GoDaddy (Plesk)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        # Vite outputs to ./dist by default
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          # Document root for dev.uijavakit.com, as shown in Plesk Hosting Settings
+          server-dir: ./dev.uijavakit.com/
+          # Don't wipe files Plesk itself manages (logs, .well-known for SSL, etc.)
+          exclude: |
+            **/.well-known/**
+            **/error_log
+            **/logs/**
+
+# === Required repo secrets (Settings > Secrets and variables > Actions) ===
+# FTP_SERVER    - e.g. ftp.yourdomain.com  (find in Plesk: Websites & Domains > FTP Access)
+# FTP_USERNAME  - your Plesk FTP username
+# FTP_PASSWORD  - your Plesk FTP password
+#
+# Tip: create a dedicated FTP user scoped to just this site/folder in Plesk,
+# rather than using your main account credentials, in case the token ever leaks.
