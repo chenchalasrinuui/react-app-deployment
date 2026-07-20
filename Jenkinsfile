@@ -31,7 +31,7 @@ pipeline {
                         lftp -u "$FTP_USER,$FTP_PASS" "$FTP_SERVER" <<EOF
 set ssl:verify-certificate no
 set ftp:use-site-chmod no
-mirror --reverse --delete --verbose dist/ "$REMOTE_DIR" \
+mirror --reverse --delete --no-perms --verbose dist/ "$REMOTE_DIR" \
   --exclude-glob .well-known/ \
   --exclude-glob error_log \
   --exclude-glob logs/
