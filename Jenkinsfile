@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        FTP_SERVER = '123.45.67.89'          // ← replace with your real Plesk IP
+        FTP_SERVER = '148.72.90.37'          // ← replace with your real Plesk IP
         REMOTE_DIR = '/dev.uijavakit.com/'   // ← replace with your subdomain path
     }
 
